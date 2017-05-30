@@ -1,0 +1,31 @@
+﻿DHCP
+//lệnh cấp pool DHCP cho mạng LAN
+(config)#ip dhcp pool LAN1 //tên pool
+(dhcp-config)#network 192.168.1.10 255.255.255.0 //lớp mạng muốn cấp
+(dhcp-config)#default-router 192.168.1.1 //IP GW
+(dhcp-config)#dns-server 8.8.8.8
+(dhcp-config)#ip dhcp excluded-address 192.168.3.1 192.168.3.9 // giới hạn
+//lệnh cấp pool DHCP cho mạng VLAN
+R(config)#in f0/0.100
+R(config-subif)#encapsulation dot1Q 100
+R(config-subif)#ip add 192.168.100.1 255.255.255.192
+
+R(config)#ip dhcp pool vlan100
+R(dhcp-config)#network 192.168.100.0 255.255.255.192
+R(dhcp-config)#default-router 192.168.100.1
+R(dhcp-config)#dns-server 8.8.8.8
+// DHCP relay
+R(config)# interface fa 0/0
+R(config-if)#ip helper-address 192.168.1.1 //IP Server
+// Xóa DHCP
+R(config)#no ip dhcp pool ID (LAN1, LAN2)
+//kiểm tra việc cấp địa chỉ IP
+R#show ip dhcp binding
+//giới hạn dãy địa chỉ IP không cấp
+R(config)#ip dhcp excluded-address 192.168.1.1 192.168.1.15
+//cấp riêng cho 1 máy
+R(config)#client-address (Địa chỉ MAC của máy tính)
+R(config)#host 192.168.100.100
+//Xin ip tự động
+R(config)#in f0/0
+R(config-if)# ip add dhcp
